@@ -57,9 +57,9 @@ public class GeneradorAliens : MonoBehaviour
 		// Localizamos el objeto que contiene el marcador
 		marcador = GameObject.Find ("Marcador");
 
-		/*if (nivel > 1) {
+		if (nivel > 1) {
 			marcador.GetComponent<ControlMarcador> ().puntos = int.Parse(Scenes.getParam("marcador"));
-		}*/
+		}
 
 
 
