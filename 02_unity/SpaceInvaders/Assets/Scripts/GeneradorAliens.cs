@@ -7,6 +7,9 @@ public class GeneradorAliens : MonoBehaviour
 
 	// Publicamos la variable para conectarla desde el editor
 	public Rigidbody2D prefabAlien1;
+	public Rigidbody2D prefabAlien2;
+
+	public int nivel;
 
 	// Referencia para guardar una matriz de objetos
 	private Rigidbody2D[,] aliens;
@@ -31,6 +34,13 @@ public class GeneradorAliens : MonoBehaviour
 	// Velocidad a la que se desplazan los aliens (medido en u/s)
 	private float velocidad = 5f;
 
+
+	// Conexión al marcador, para poder actualizarlo
+	private GameObject marcador;
+
+	//Variable para saber la puntuacion en cada momento.
+	int puntos;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -43,6 +53,16 @@ public class GeneradorAliens : MonoBehaviour
 		// Calculamos el límite izquierdo y el derecho de la pantalla (añadimos una unidad a cada lado como margen)
 		limiteIzq = -1.0f * distanciaHorizontal + 1;
 		limiteDer = 1.0f * distanciaHorizontal - 1;
+
+		// Localizamos el objeto que contiene el marcador
+		marcador = GameObject.Find ("Marcador");
+
+		/*if (nivel > 1) {
+			marcador.GetComponent<ControlMarcador> ().puntos = int.Parse(Scenes.getParam("marcador"));
+		}*/
+
+
+
 	}
 	
 	// Update is called once per frame
@@ -90,7 +110,14 @@ public class GeneradorAliens : MonoBehaviour
 
 		// Si no quedan aliens, hemos terminado
 		if( numAliens == 0 ) {
-			SceneManager.LoadScene ("Nivel1");
+			puntos = marcador.GetComponent<ControlMarcador> ().puntos;
+
+			if (nivel == 2) {
+				print ("Hemos terminado");
+				Scenes.Load ("Nivel1", "marcador", 0.ToString ());
+			} else {
+				Scenes.Load ("Nivel" + (nivel + 1), "marcador", puntos.ToString());
+			}
 		}
 
 		// Si al menos un alien ha tocado el borde, todo el pack cambia de rumbo
@@ -136,8 +163,18 @@ public class GeneradorAliens : MonoBehaviour
 				// Posición de cada alien
 				Vector2 posicion = new Vector2 (origen.x + (espacioH * j), origen.y + (espacioV * i));
 
-				// Instanciamos el objeto partiendo del prefab
-				Rigidbody2D alien = (Rigidbody2D)Instantiate (prefabAlien1, posicion, transform.rotation);
+				Rigidbody2D alien = null;
+
+				switch (SceneManager.GetActiveScene ().name) {
+					case "Nivel1":
+						// Instanciamos el objeto partiendo del prefab
+						alien = (Rigidbody2D)Instantiate (prefabAlien1, posicion, transform.rotation);
+						break;
+					case "Nivel2":
+						// Instanciamos el objeto partiendo del prefab
+						alien = (Rigidbody2D)Instantiate (prefabAlien2, posicion, transform.rotation);
+						break;
+				}
 
 				// Guardamos el alien en el array
 				aliens [i, j] = alien;
