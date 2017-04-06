@@ -2,61 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class ControlPause : MonoBehaviour {
+public class ControlGameOver : MonoBehaviour {
 
-	GameObject[] pauseObjects;
-
-	public GameObject texto;
-
-	private GameObject nave;
+	GameObject[] gameOverObjects;
 
 	// Use this for initialization
 	void Start () {
 		Time.timeScale = 1;
-		pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
-		hidePaused();
-
-		nave = GameObject.Find ("Nave");
-
+		gameOverObjects = GameObject.FindGameObjectsWithTag("GameOver");
+		hideGameOver();
 	}
 
 	// Update is called once per frame
 	void Update () {
 
 		//uses the p button to pause and unpause the game
-		if(Input.GetKeyDown(KeyCode.P))
+		/*if(Input.GetKeyDown(KeyCode.P))
 		{
 			if(Time.timeScale == 1)
 			{
 				Time.timeScale = 0;
-				showPaused();
+				showGameOver();
 			} else if (Time.timeScale == 0){
 				Debug.Log ("high");
 				Time.timeScale = 1;
-				hidePaused();
+				hideGameOver();
 			}
-		}
-
-
-		//Debug.Log (nave.GetComponent<ControlNave>().alive);
-
-		if (Time.timeScale == 0 &&  nave.GetComponent<ControlNave>().alive== false){
-			showPaused ();
-			texto.GetComponent<Text> ().text= "GAME OVER";
-		}
+		}*/
 	}
 
 
 	//Reloads the Level
 	public void Reload(){
-		if (Time.timeScale == 0 && nave.GetComponent<ControlNave> ().alive == false) {
-			SceneManager.LoadScene("Nivel1");
-		} else {
-			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-		}
-
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 
 	//controls the pausing of the scene
@@ -64,23 +43,23 @@ public class ControlPause : MonoBehaviour {
 		if(Time.timeScale == 1)
 		{
 			Time.timeScale = 0;
-			showPaused();
+			showGameOver();
 		} else if (Time.timeScale == 0){
 			Time.timeScale = 1;
-			hidePaused();
+			hideGameOver();
 		}
 	}
 
 	//shows objects with ShowOnPause tag
-	public void showPaused(){
-		foreach(GameObject g in pauseObjects){
+	public void showGameOver(){
+		foreach(GameObject g in gameOverObjects){
 			g.SetActive(true);
 		}
 	}
 
 	//hides objects with ShowOnPause tag
-	public void hidePaused(){
-		foreach(GameObject g in pauseObjects){
+	public void hideGameOver(){
+		foreach(GameObject g in gameOverObjects){
 			g.SetActive(false);
 		}
 	}

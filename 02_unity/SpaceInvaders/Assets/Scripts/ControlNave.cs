@@ -13,10 +13,13 @@ public class ControlNave : MonoBehaviour
 	// Acceso al prefab del disparo
 	public Rigidbody2D disparo;
 
+	//Variable para saber si esta viva la nave.
+	public bool alive;
+
 	// Use this for initialization
 	void Start ()
 	{
-	
+		alive = true;
 	}
 	
 	// Update is called once per frame
