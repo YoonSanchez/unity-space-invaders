@@ -13,6 +13,8 @@ public class ControlAlien : MonoBehaviour
 	// Objeto para reproducir la explosión de un alien
 	private GameObject efectoExplosion;
 
+	private GameObject nave;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -21,6 +23,10 @@ public class ControlAlien : MonoBehaviour
 
 		// Objeto para reproducir la explosión de un alien
 		efectoExplosion = GameObject.Find ("EfectoExplosion");
+
+		Time.timeScale = 1;
+
+		nave = GameObject.Find ("Nave");
 	}
 	
 	// Update is called once per frame
@@ -50,7 +56,8 @@ public class ControlAlien : MonoBehaviour
 			Destroy (gameObject);
 
 		} else if (coll.gameObject.tag == "nave") {
-			SceneManager.LoadScene ("Nivel1");
+			nave.GetComponent<ControlNave>().alive = false;
+			Time.timeScale = 0;
 		}
 	}
 }
