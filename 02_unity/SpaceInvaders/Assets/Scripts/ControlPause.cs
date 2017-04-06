@@ -65,7 +65,9 @@ public class ControlPause : MonoBehaviour {
 		{
 			Time.timeScale = 0;
 			showPaused();
-		} else if (Time.timeScale == 0){
+		} else if (Time.timeScale == 0 && nave.GetComponent<ControlNave> ().alive == false){
+			SceneManager.LoadScene("Nivel1");
+		}else if(Time.timeScale==0) {
 			Time.timeScale = 1;
 			hidePaused();
 		}
