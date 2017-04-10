@@ -8,15 +8,18 @@ public class GeneradorAliens : MonoBehaviour
 	// Publicamos la variable para conectarla desde el editor
 	public Rigidbody2D prefabAlien1;
 	public Rigidbody2D prefabAlien2;
+    public Rigidbody2D mini_boss;
+    public Rigidbody2D boss;
 
-	public int nivel;
+    public int nivel;
 
 	// Referencia para guardar una matriz de objetos
 	private Rigidbody2D[,] aliens;
 
+
 	// Tamaño de la invasión alienígena
-	private const int FILAS = 4;
-	private const int COLUMNAS = 7;
+	private int FILAS = 4;
+	private int COLUMNAS = 7;
 
 	// Enumeración para expresar el sentido del movimiento
 	private enum direccion { IZQ, DER };
@@ -34,6 +37,10 @@ public class GeneradorAliens : MonoBehaviour
 	// Velocidad a la que se desplazan los aliens (medido en u/s)
 	private float velocidad = 5f;
 
+    //Sacar a los kamikazes.
+    private bool sacar_kamikazes = false;
+    //Fin kamikazes
+    private bool fin_kamikazes = false;
 
 	// Conexión al marcador, para poder actualizarlo
 	private GameObject marcador;
@@ -44,9 +51,19 @@ public class GeneradorAliens : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		// Rejilla de 4x7 aliens
-		generarAliens (FILAS, COLUMNAS, 1.5f, 1.0f);
+		if (nivel == 3){
+            FILAS = 3;
+            COLUMNAS = 5;
 
+            altura = 0.8f;
+            // Rejilla de 3x5 aliens
+            generarAliens(FILAS, COLUMNAS, 2f, 1.5f);
+        }
+        else {
+			// Rejilla de 4x7 aliens
+			generarAliens (FILAS, COLUMNAS, 1.5f, 1.0f);
+		}
+			
 		// Calculamos la anchura visible de la cámara en pantalla
 		float distanciaHorizontal = Camera.main.orthographicSize * Screen.width / Screen.height;
 
@@ -64,9 +81,8 @@ public class GeneradorAliens : MonoBehaviour
 
 
 	}
-	
-	// Update is called once per frame
-	void Update ()
+    // Update is called once per frame
+    void Update ()
 	{
 		// Contador para saber si hemos terminado
 		int numAliens = 0;
@@ -112,14 +128,15 @@ public class GeneradorAliens : MonoBehaviour
 		if( numAliens == 0 ) {
 			puntos = marcador.GetComponent<ControlMarcador> ().puntos;
 
-			if (nivel == 2) {
-				print ("Hemos terminado");
-				Scenes.Load ("Nivel1", "marcador", 0.ToString ());
-			} else {
-				Scenes.Load ("Nivel" + (nivel + 1), "marcador", puntos.ToString());
-			}
-		}
-
+            if (nivel == 3 && sacar_kamikazes==false) {
+                generarKamikazes(FILAS, COLUMNAS, 2f, 1.5f);
+            } else if (nivel == 3 && fin_kamikazes){
+                Scenes.Load("Nivel1", "marcador", 0.ToString());
+            }else if(nivel!=3){
+                 Scenes.Load("Nivel" + (nivel + 1), "marcador", puntos.ToString());
+            }
+        }
+        
 		// Si al menos un alien ha tocado el borde, todo el pack cambia de rumbo
 		if (limiteAlcanzado == true) {
 			for (int i = 0; i < FILAS; i++) {
@@ -140,6 +157,49 @@ public class GeneradorAliens : MonoBehaviour
 			}
 		}
 	}
+
+    void generarKamikazes(int filas, int columnas, float espacioH, float espacioV, float escala = 1.0f)
+    {
+        //Indicamos que vamos a sacar a los kamikazes.
+        sacar_kamikazes = true;
+        // Calculamos el punto de origen de la rejilla
+        Vector2 origen = new Vector2(transform.position.x - (columnas / 2.0f) * espacioH + (espacioH / 2), transform.position.y);
+
+        Rigidbody2D alien = null;
+        for (int i = 0; i < 6; i++){
+
+            // Posición de cada alien
+            Vector2 posicion = new Vector2(i * 4, origen.y + i*12);
+            //Generamos un número random.
+            int rnd = Random.Range(0, 8);
+
+            float masa = Random.Range(0.0f, 1.0f);
+
+            if (rnd < 8){
+                alien = (Rigidbody2D)Instantiate(prefabAlien1, posicion, transform.rotation);
+            }
+            else if(rnd==8){
+                //Generamos el alien.
+                alien = (Rigidbody2D)Instantiate(mini_boss, posicion, transform.rotation);
+            }
+            else{
+                alien = (Rigidbody2D)Instantiate(prefabAlien2, posicion, transform.rotation);
+            }
+
+            alien.bodyType = 0; //Dinamyc
+
+            //Asignamos la masa.
+            alien.mass = masa;
+
+            // Nota: El prefab original ya está escalado a 0.2f
+            alien.transform.localScale = new Vector2(0.2f * escala, 0.2f * escala);
+
+            //Asignamos gravedad al objeto para que caiga.
+            alien.gravityScale = 0.2f;
+        }
+    }
+
+
 
 	void generarAliens (int filas, int columnas, float espacioH, float espacioV, float escala = 1.0f)
 	{
@@ -174,7 +234,10 @@ public class GeneradorAliens : MonoBehaviour
 						// Instanciamos el objeto partiendo del prefab
 						alien = (Rigidbody2D)Instantiate (prefabAlien2, posicion, transform.rotation);
 						break;
-				}
+                    case "Nivel3":
+                        alien = (Rigidbody2D)Instantiate(mini_boss, posicion, transform.rotation);
+                        break;
+                }
 
 				// Guardamos el alien en el array
 				aliens [i, j] = alien;
