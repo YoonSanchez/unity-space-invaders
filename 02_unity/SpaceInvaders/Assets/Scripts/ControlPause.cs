@@ -46,7 +46,13 @@ public class ControlPause : MonoBehaviour {
 			showPaused ();
 			texto.GetComponent<Text> ().text= "GAME OVER";
 		}
-	}
+
+        if (Time.timeScale == 0 && nave.GetComponent<ControlNave>().victoria == true){
+            showPaused();
+            texto.GetComponent<Text>().text = "VICTORY";
+        }
+
+    }
 
 
 	//Reloads the Level

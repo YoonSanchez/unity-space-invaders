@@ -15,9 +15,13 @@ public class ControlNave : MonoBehaviour
 
 	//Variable para saber si esta viva la nave.
 	public bool alive;
+    //Variable para saber cuantas vidas tiene.
+    public int vidas = 1;
+    //Variable para saber si ha ganado.
+    public bool victoria = false;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start ()
 	{
 		alive = true;
 	}

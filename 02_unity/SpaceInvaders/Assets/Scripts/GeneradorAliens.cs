@@ -41,6 +41,10 @@ public class GeneradorAliens : MonoBehaviour
     private bool sacar_kamikazes = false;
     //Fin kamikazes
     private bool fin_kamikazes = false;
+    //Nave
+    private GameObject nave;
+    //Variable para saber cuantos kamikazes se han mostrado.
+    private int n_kamikazes = 0;
 
 	// Conexión al marcador, para poder actualizarlo
 	private GameObject marcador;
@@ -135,8 +139,12 @@ public class GeneradorAliens : MonoBehaviour
             }else if(nivel!=3){
                  Scenes.Load("Nivel" + (nivel + 1), "marcador", puntos.ToString());
             }
+
+            if (n_kamikazes == 6 && nave.GetComponent<ControlNave>().vidas > 0){
+                nave.GetComponent<ControlNave>().victoria = true;
+            }
+
         }
-        
 		// Si al menos un alien ha tocado el borde, todo el pack cambia de rumbo
 		if (limiteAlcanzado == true) {
 			for (int i = 0; i < FILAS; i++) {
@@ -165,11 +173,19 @@ public class GeneradorAliens : MonoBehaviour
         // Calculamos el punto de origen de la rejilla
         Vector2 origen = new Vector2(transform.position.x - (columnas / 2.0f) * espacioH + (espacioH / 2), transform.position.y);
 
+        //Añadimos más vidas a la nave (Posibilidades de ganar)
+        nave = GameObject.Find("Nave");
+
+        nave.GetComponent<ControlNave>().vidas = 3;
+
         Rigidbody2D alien = null;
         for (int i = 0; i < 6; i++){
 
             // Posición de cada alien
-            Vector2 posicion = new Vector2(i * 4, origen.y + i*12);
+            if (i == 0){
+                i += 1;
+            }
+            Vector2 posicion = new Vector2(i * 0.5f, origen.y + i*12);
             //Generamos un número random.
             int rnd = Random.Range(0, 8);
 
@@ -196,6 +212,8 @@ public class GeneradorAliens : MonoBehaviour
 
             //Asignamos gravedad al objeto para que caiga.
             alien.gravityScale = 0.2f;
+
+            n_kamikazes += 1;
         }
     }
 
