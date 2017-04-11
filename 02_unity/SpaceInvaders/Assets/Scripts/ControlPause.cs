@@ -95,6 +95,14 @@ public class ControlPause : MonoBehaviour {
 
 	//loads inputted level
 	public void LoadLevel(string level){
-		SceneManager.LoadScene (level);
+
+		//string[] aux = level.Split ('_');
+
+
+		/*if (aux.Length > 1) {
+			Scenes.Load (aux [0], "tipo", aux [1]);
+		} else {*/
+			SceneManager.LoadScene (level);
+		//}
 	}
 }
