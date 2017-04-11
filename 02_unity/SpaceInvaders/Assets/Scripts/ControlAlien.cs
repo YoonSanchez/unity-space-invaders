@@ -70,14 +70,19 @@ public class ControlAlien : MonoBehaviour
                 marcador.GetComponent<ControlMarcador>().puntos += puntos;
             }
 		} else if (coll.gameObject.tag == "nave") {
-			nave.GetComponent<ControlNave>().alive = false;
-			Time.timeScale = 0;
+            quitarVida();
 		} else if (coll.gameObject.tag == "LimiteJuego"){
+            quitarVida();
+        }
+	}
+    void quitarVida(){
+        nave.GetComponent<ControlNave>().vidas -= 1;
+        if (nave.GetComponent<ControlNave>().vidas == 0){
             nave.GetComponent<ControlNave>().alive = false;
             Time.timeScale = 0;
         }
-
-        Debug.Log(coll.gameObject.tag);
-
-	}
+        else{
+            Destroy(gameObject);
+        }
+    }
 }
